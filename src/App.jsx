@@ -7,9 +7,8 @@ import Login from "./pages/Login/Login"
 import SignUp from "./pages/SignUp/SignUp"
 import Plans from "./pages/Plans/Plans"
 import Users from "./pages/Users/Users"
-import './App.css'
 
-function App() {
+export default function App() {
 
   const [userData, setUserData,] = useState([]);
 
@@ -37,4 +36,4 @@ function App() {
   )
 }
 
-export default App
+
