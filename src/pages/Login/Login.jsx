@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext} from 'react';
+import { useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import Context from "../../Context";
 import ClipLoader from 'react-spinners/ClipLoader';
@@ -13,6 +13,19 @@ export default function Login () {
     const [formStatus, setFormStatus] = useState(false);
     const [userData, setUserData] = useContext(Context);
 
+    useEffect(() => {
+        logOnCheckAndGo();
+    }, []);
+  
+    function logOnCheckAndGo () {
+        console.log("Entrou em logOnCheckAndGo! ");
+    if (localStorage.getItem("UserInfo")) {
+        setUserData(localStorage.getItem("UserInfo"));
+        if (userData.membership == null) { navigate("/subscriptions"); }
+        else { navigate("/home"); }
+     }
+    }   
+
     function signUp() {
         navigate("/sign-up");
     }
@@ -24,9 +37,7 @@ export default function Login () {
         	email: email,
             password: password
         };
-        //console.log("email:"+data.email);
-        //console.log("name:"+data.password);
-        console.log("Server Post");
+        console.log("Server Posting ...");
         const query = axios.post('https://mock-api.driven.com.br/api/v4/driven-plus/auth/login', data);
         query.then(loginSuccess); 
         query.catch(loginError);
@@ -34,9 +45,10 @@ export default function Login () {
 
       function loginSuccess (answer) {
         console.log(answer.data);
-        setUserData(answer.data);
-        console.log("Login Success!");
-        navigate("/home");
+        //setUserData(answer.data);
+        localStorage.setItem('UserInfo', JSON.stringify(answer.data));
+        console.log("Get User Info no Storage",localStorage.getItem("UserInfo"));
+        logOnCheckAndGo();
       }
 
       function loginError (answer) {
@@ -55,7 +67,7 @@ export default function Login () {
                 <ContainerForm onSubmit={sendRequest}>
                             <input data-test="email-input" value={email} type="email" disabled={formStatus} onChange={e => setEmail(e.target.value)}  placeholder="Email" />
                             <input data-test="password-input" value={password} type="password" disabled={formStatus} onChange={e => setPassword(e.target.value)} placeholder="Senha" />
-                            <button data-test="login-btn" disabled={formStatus}>
+                            <button data-test="login-btn" onClick={sendRequest} disabled={formStatus}>
                             {
                         formStatus? (
                             <div className="loader-container">

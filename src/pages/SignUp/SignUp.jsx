@@ -8,7 +8,7 @@ export default function SignUp () {
     const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [foto, setFoto] = useState("");
+    const [cpf, setCPF] = useState("");
     const [formStatus, setFormStatus] = useState(false);
     const navigate = useNavigate();
     
@@ -28,26 +28,23 @@ export default function SignUp () {
         const data = {
         	email: email,
             name: name,
-            image: foto,
+            cpf: cpf,
             password: password
         };
-        console.log("email:"+data.email);
-        console.log("name:"+data.name);   
-        console.log("image:"+data.foto);   
-        console.log("password:"+data.password);   
-        const query = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up', data);
-        query.then(returnHome); 
+        const query = axios.post('https://mock-api.driven.com.br/api/v4/driven-plus/auth/sign-up', data);
+        query.then(returnLogin); 
         query.catch(signUpError);
       }
 
     return (
            <ContainerApp>
                 <ContainerForm onSubmit={sendRequest}>
+                    <input data-test="user-name-input" value={name} type="text" disabled={formStatus} onChange={e => setName(e.target.value)} placeholder="Nome" />
+                    <input data-test="user-image-input" value={cpf} type="text" disabled={formStatus} onChange={e => setCPF(e.target.value)} placeholder="CPF" />
                     <input data-test="email-input" value={email} type="email" disabled={formStatus} onChange={e => setEmail(e.target.value)}  placeholder="Email" />
                     <input data-test="password-input" value={password} type="password" disabled={formStatus} onChange={e => setPassword(e.target.value)} placeholder="Senha" />
-                    <input data-test="user-name-input" value={name} type="text" disabled={formStatus} onChange={e => setName(e.target.value)} placeholder="Nome" />
-                    <input data-test="user-image-input" value={foto} type="text" disabled={formStatus} onChange={e => setFoto(e.target.value)} placeholder="Foto" />
-                    <button data-test="signup-btn" disabled={formStatus}>
+                   
+                    <button data-test="signup-btn" onClick={sendRequest} disabled={formStatus}>
                     {
                     formStatus? (
                         <div className="loader-container">
