@@ -19,10 +19,15 @@ export default function Login () {
   
     function logOnCheckAndGo () {
         console.log("Entrou em logOnCheckAndGo! ");
-    if (localStorage.getItem("UserInfo")) {
-        setUserData(localStorage.getItem("UserInfo"));
-        if (userData.membership == null) { navigate("/subscriptions"); }
-        else { navigate("/home"); }
+        const info = localStorage.getItem("UserInfo");
+        if (info != undefined && info != null) {
+            //console.log("UserInfo: "+info);
+            const infoUnserial =  JSON.parse(info);
+            //console.log(infoUnserial);
+            setUserData(infoUnserial);
+            //console.log("userData = "+userData);
+            if (userData.membership == null) { navigate("/subscriptions"); }
+            else { navigate("/home"); }
      }
     }   
 
@@ -45,9 +50,7 @@ export default function Login () {
 
       function loginSuccess (answer) {
         console.log(answer.data);
-        //setUserData(answer.data);
         localStorage.setItem('UserInfo', JSON.stringify(answer.data));
-        console.log("Get User Info no Storage",localStorage.getItem("UserInfo"));
         logOnCheckAndGo();
       }
 
@@ -94,6 +97,14 @@ export const ContainerApp = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    h1 {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 32px;
+        line-height: 38px;
+        color: #FFFFFF;
+    }
 `
 
 const Logo = styled.div`
