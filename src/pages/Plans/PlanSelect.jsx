@@ -3,54 +3,119 @@ import styled from "styled-components";
 import { useNavigate, Link, useParams} from 'react-router-dom';
 import { useState, useContext, useEffect} from 'react';
 import axios from 'axios';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 
 export default function PlanSelect () {
 
     const [userData, setUserData] = useContext(Context);
     const [json, setJson] = useState([]);
-    const [json2, setJson2] = useState([]);
     const params = useParams();
+    const [formStatus, setFormStatus] = useState(false);
+    const [name, setName] = useState("");
+	const [card, setCard] = useState("");
+    const [secureCod, setSecureCod] = useState("");
+    const [vality, setVality] = useState("");
+    const [modalRef, setmodalRef] = useState("");
+    const navigate = useNavigate();
+
+
     let benefitsArray = [];
 
-    function benefits (i) {
-        console.log("i"+i);
-        return `${i+1} - ${benefitsArray[i]}`;
+
+    function BuySuccess (answer) {
+        navigate("/home");
     }
 
+    function BuyError (answer) {
+        alert("Erro na aquisição"+answer.response.data.message);
+    }
+
+    function sendRequest(event) {
+
+        const ConfirmBuy = confirm("Confirma a compra ?");
+
+    
+        if (ConfirmBuy) { 
+               event.preventDefault();
+
+
+            let config = {
+                headers: {
+                    'Authorization': 'Bearer ' + userData.token
+                }
+            }
+            
+            const data = {
+                membershipId: params.idPlan,
+                cardName: name,
+                cardNumber: card,
+                securityNumber: secureCod,
+                expirationDate: vality
+            };
+
+            
+            const query = axios.post('https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions', data , config );
+
+            query.then(BuySuccess); 
+            query.catch(BuyError);
+            
+  
+        }
+
+        promise.catch((error) => {
+            console.log(error.response.data);
+            alert("Erro: "+error.response.data);
+            setFormStatus(false);
+          }); // if go bad, error
+      }
+
+
+    function axiosSuccess (props) {
+        setJson(props);
+    }
+   
  
     useEffect(() => {
-        
+        //console.log("Informações que precisamos após entrar no Select:");
+        //console.log("userData.token: "+userData.token);
+        //console.log("params.idPlan: "+params.idPlan);   
        
         let config = {
             headers: {
                 'Authorization': 'Bearer ' + userData.token
             }
         }
-        console.log("userData.token "+userData.token);
         const URL = `https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions/memberships/${params.idPlan}`;
     
         const promise = axios.get(URL,config);
+
+        //console.log("URL de busca axios GET: "+URL);   
     
         promise.then((answer) => {
-           setJson(answer.data);
-           console.log(json);
-           benefitsArray = [];
-          for (let i=0; i< json.perks.length; i++) {
-            //console.log("item "+json.perks[i].title);
-            benefitsArray.push(json.perks[i].title);
-          }
-          console.log("benefits Array:"+benefitsArray);
-          const newStrings = benefitsArray.toString();
-          setJson2(JSON.parse(newStrings));
+           //console.log("answer.data após sucesso do AXIOS GET "+answer.data);
+           axiosSuccess(answer.data);        
         }); // if ok
     
         promise.catch((error) => {
           console.log(error.response.data);
         }); // if go bad, error
     
+
+      
+
       }, []);
-        if (json != undefined) {
+
+        if (json.perks === undefined || json.perks === null || json.perks === "") {
+            return (
+                <ContainerApp>
+                    <PlanImg>
+                    <h1>Carregando...</h1>
+                    </PlanImg>
+                </ContainerApp>
+            )
+        }
+        else {
                 return (
                     <ContainerApp>
                         <Link to={`/subscriptions/`}>
@@ -58,17 +123,22 @@ export default function PlanSelect () {
                         </Link>
 
                         <ContainerMid>
+                            <PlanImg>
                             <img src={json.image} />
                             <h1>{json.name}</h1>
+                            </PlanImg>
 
                             <TopBenefitsAndPrice>
                             <img src="../../assets/list.png"/>
                             <h1>Benefícios:</h1> 
                             </TopBenefitsAndPrice>
-                            <BenefitsAndPrice>1-</BenefitsAndPrice>
-                            <BenefitsAndPrice>2-</BenefitsAndPrice>
-                                       
-                  
+                            {
+                            json.perks.map((p, i) => (
+                                <BenefitsAndPrice key={p.id}>
+                                    {i+1}. {p.title} 
+                                </BenefitsAndPrice>
+
+                            ))}        
                    
                             <TopBenefitsAndPrice>
                             <img src="../../assets/cash.png"/>
@@ -80,7 +150,30 @@ export default function PlanSelect () {
 
                         </ContainerMid>
 
-                    </ContainerApp>
+                        <ContainerForm>
+                            <input data-test="name-input" value={name} type="text" disabled={formStatus} onChange={e => setName(e.target.value)}  placeholder="Nome impresso no cartão" />
+                            <input data-test="card-input" value={card} type="text" disabled={formStatus} onChange={e => setCard(e.target.value)} placeholder="Digitos do cartão" />
+                        </ContainerForm>
+                            <SmallInputContainer>
+                            <input data-test="cardcore-input" value={secureCod} type="text" disabled={formStatus} onChange={e => setSecureCod(e.target.value)}  placeholder="Código de segurança" />
+                            <input data-test="cardvality-input" value={vality} type="text" disabled={formStatus} onChange={e => setVality(e.target.value)} placeholder="Validade" />
+                            </SmallInputContainer>
+                        <ContainerForm>
+                            <button data-test="login-btn" onClick={sendRequest} disabled={formStatus}>
+                            {
+                        formStatus? (
+                            <div className="loader-container">
+                                <ClipLoader color={'#fff'} loading={formStatus} size={15} />
+                            </div>
+                            ) : (
+                            "Entrar"
+                        ) }
+                            </button>
+                        </ContainerForm>
+                       
+                        
+
+                        </ContainerApp>
                 )
 
             }
@@ -101,9 +194,17 @@ const ContainerApp = styled.div`
     }
 `
 
-const BackTopImg = styled.div`
+const PlanImg = styled.div`
+    flex-direction: column;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
     margin-left: 22px;
-    margin-top: 25px;
+`
+
+const BackTopImg = styled.div`
+    margin-top: 20px;
+    margin-left: 20px;
     height: 28px;
     width: 28px;
     border-radius: 0px;
@@ -113,8 +214,9 @@ const BackTopImg = styled.div`
 const ContainerMid = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 62px;
+    margin-top: 30px;
     margin-left: 44px;
+    margin-bottom: 15px;
     img {
         display: flex;
         flex-direction: column;
@@ -140,6 +242,7 @@ const TopBenefitsAndPrice = styled.div`
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    margin-top: 5px;
     margin-bottom: 0px;
     img {
         width: 12px;
@@ -167,4 +270,106 @@ const BenefitsAndPrice = styled.div`
     font-size: 14px;
     color: #FFFFFF;
     margin-top: 2px;
+`
+
+const ContainerForm = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    input {
+        padding: 6px 6px;
+        margin-bottom: 3px;
+        width: 299px;
+        height: 52px;
+        background: #FFFFFF;
+        border-radius: 8px;
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 16px;
+        text-align: justify;
+        color: #7E7E7E;
+    }
+    button {
+        margin-top: 12px;
+        width: 298px;
+        height: 52px;
+        background: #FF4791;
+        border-radius: 8px;
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 16px;
+        color: #FFFFFF;
+    }
+`
+
+ 
+const SmallInputContainer = styled.div`
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 33px;
+        margin-right: 36px;
+        input {
+            padding: 6px 6px;
+            width: 140px;
+            height: 52px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 16px;
+            text-align: justify;
+            color: #7E7E7E;
+        }
+`
+
+const ContainerModal = styled.div`
+    display: none;
+    justify-content: center;
+    flex-direction: column;
+    height: 210px;
+    width: 248px;
+    left: 64px;
+    top: 229px;
+    border-radius: 12px;
+    backgroun-color: white;
+    h1 {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+        text-align: center;
+        color: #000000;
+    }
+`
+
+const containerModalButtons = styled.div`
+    margin-top: 47px;
+    margin-left: 22px;
+    margin-right: 22px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row; 
+    height: 210px;
+    width: 248px;
+    left: 64px;
+    top: 229px;
+    border-radius: 12px;
+    buttom {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+        text-align: center;
+        color: #000000;
+    }
 `

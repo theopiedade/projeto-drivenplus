@@ -18,12 +18,12 @@ export default function Login () {
     }, []);
   
     function logOnCheckAndGo () {
-        console.log("Entrou em logOnCheckAndGo! ");
+        //console.log("Entrou em logOnCheckAndGo! ");
         const info = localStorage.getItem("UserInfo");
         if (info != undefined && info != null) {
-            //console.log("UserInfo: "+info);
+            console.log("JSON desconstruído enviado via UserData e Context UserInfo: "+info);
             const infoUnserial =  JSON.parse(info);
-            //console.log(infoUnserial);
+            console.log("JSON desseriado:"+infoUnserial.membership);
             setUserData(infoUnserial);
             //console.log("userData = "+userData);
             if (userData.membership == null) { navigate("/subscriptions"); }
