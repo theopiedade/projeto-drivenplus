@@ -7,6 +7,7 @@ import Login from "./pages/Login/Login"
 import SignUp from "./pages/SignUp/SignUp"
 import Plans from "./pages/Plans/Plans"
 import Users from "./pages/Users/Users"
+import PlanSelect from "./pages/Plans/PlanSelect"
 
 export default function App() {
 
@@ -23,7 +24,7 @@ export default function App() {
 
                   <Route path='/' element={  <Login/> } />
                   <Route path='/sign-up' element={  <SignUp/> } />
-                  <Route path='/subscriptions/:idPlan' element={  <Plans/> } />
+                  <Route path='/subscriptions/:idPlan' element={  <PlanSelect/> } />
                   <Route path='/subscriptions' element={  <Plans/> } />
                   <Route path='/home' element={  <Home/> } />
                   <Route path='/users' element={  <Users/> } />

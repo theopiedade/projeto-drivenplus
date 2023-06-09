@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import {ContainerApp, ContainerForm} from "../Login/Login";
-import { useNavigate} from 'react-router-dom';
+import {ContainerApp} from "../Login/Login";
+import { Link, useParams, useNavigate} from 'react-router-dom';
 import { useState, useContext, useEffect} from 'react';
 import Context from "../../Context";
 import axios from 'axios';
@@ -11,23 +11,15 @@ export default function Plans () {
     const [userData, setUserData] = useContext(Context);
     const [json, setJson] = useState([]);
     const navigate = useNavigate();
-    const [planSelected, setPlanSelected] = useState("");
 
-    if (planSelected != "") {
-        console.log("Selecionado plano: "+planSelected);
-    }
-
-    function selectPlan (itemSel) {
-        console.log("Selecionado plano: "+itemSel);
-    }
-
+ 
     useEffect(() => {
-        console.log("userData.token = "+ userData.token);
         let config = {
             headers: {
                 'Authorization': 'Bearer ' + userData.token
             }
         }
+  
 
         const URL = `https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions/memberships`;
     
@@ -39,21 +31,24 @@ export default function Plans () {
     
         promise.catch((error) => {
           console.log(error.response.data);
+          navigate("/");
         }); // if go bad, error
     
       }, []);
 
     if (json.length > 0) {
         return (
-            <ContainerApp>
+            <ContainerApp key={userData.token}>
                 <h1>Escolha seu Plano</h1>
       
             {
             json.map(item => (
-                <ContainerPlans id={item.id} onClick={() => selectPlan(item.id)}>
+                <Link to={`/subscriptions/${item.id}`}>
+                <ContainerPlans key={item.id}>
                     <img src={item.image}></img>
                     <h1> {item.price} </h1>
                 </ContainerPlans> 
+                </Link>
               ))
              }
 
@@ -71,16 +66,15 @@ export const ContainerPlans = styled.div`
     border-radius: 12px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    justify-content: space-between;
+    margin-bottom: 10px;
     img {
         margin-left: 16px;
         width: 140px;
         height: 95px;
     }
     h1 {
-        margin-bottom: 24px;
         margin-right: 16px;
         font-family: 'Roboto';
         font-style: normal;
