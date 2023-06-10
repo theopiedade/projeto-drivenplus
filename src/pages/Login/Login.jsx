@@ -18,14 +18,12 @@ export default function Login () {
     }, []);
   
     function logOnCheckAndGo () {
-        //console.log("Entrou em logOnCheckAndGo! ");
         const info = localStorage.getItem("UserInfo");
         if (info != undefined && info != null) {
             console.log("JSON desconstruído enviado via UserData e Context UserInfo: "+info);
             const infoUnserial =  JSON.parse(info);
             console.log("JSON desseriado:"+infoUnserial.membership);
             setUserData(infoUnserial);
-            //console.log("userData = "+userData);
             if (userData.membership == null) { navigate("/subscriptions"); }
             else { navigate("/home"); }
      }
@@ -42,7 +40,6 @@ export default function Login () {
         	email: email,
             password: password
         };
-        console.log("Server Posting ...");
         const query = axios.post('https://mock-api.driven.com.br/api/v4/driven-plus/auth/login', data);
         query.then(loginSuccess); 
         query.catch(loginError);
@@ -55,8 +52,6 @@ export default function Login () {
       }
 
       function loginError (answer) {
-        console.log("Deu erro");
-        console.log("Erro:"+answer.code+" Msg:"+answer.response.data.message);
         alert(answer.response.data.message);
         setFormStatus(false);
       }

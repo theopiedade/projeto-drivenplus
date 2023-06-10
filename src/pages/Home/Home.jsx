@@ -9,17 +9,84 @@ export default function Home() {
 
     const [userData, setUserData] = useContext(Context);
     const params = useParams();
-    
-    return (
-        <ContainerApp> 
-            <ContainerTop>
-                <img src={ } />
-            </ContainerTop>
-            <h1>Olá, {userData.name} </h1>
+    const [userInfo, setUserInfo] = useState("");
+    const navigate = useNavigate();
 
-        </ContainerApp>
-    );
-}
+
+    function logOnCheckAndGo () {
+        const info = localStorage.getItem("UserInfo");
+        if (info != undefined && info != null) {
+            const infoUnserial =  JSON.parse(info);
+            setUserData(infoUnserial);
+            if (userData.membership == null) { navigate("/subscriptions"); }
+            else { navigate("/home"); }
+     }
+    }   
+
+    useEffect(() => {
+        const data = {
+        	email: userData.email,
+            password: userData.password
+        };
+        const query = axios.post('https://mock-api.driven.com.br/api/v4/driven-plus/auth/login', data);
+        query.then(dataSuccess); 
+        query.catch(dataError);
+      },[]);
+
+      function dataError (answer) {
+        alert(answer.response.data.message);
+        setFormStatus(false);
+      }
+
+      function dataSuccess (answer) {
+        setUserInfo(answer.data);
+      }
+    
+      if (userInfo.membership == null) { 
+        return (
+            <ContainerApp> 
+                <ContainerTop>
+                    <img src="../../assets/user.png" />
+                </ContainerTop>
+                     <h1>Carregando...</h1>
+            </ContainerApp>
+                );
+
+       }
+      else { 
+            return (
+            <ContainerApp> 
+                <ContainerTop>
+                    <PlanImage>
+                    <img src={userInfo.membership.image} />
+                    </PlanImage>
+                    <USerImage>
+                    <img src="../../assets/user.png" />
+                    </USerImage>
+                 </ContainerTop>
+                <ContainerMid>
+                     <h1>Olá, {userInfo.name} </h1>
+                     {
+                            userInfo.membership.perks.map((p, i) => (
+                                <Link to={p.link}>
+                                <button key={p.id}> {p.title} </button>
+                                </Link>
+                                
+                            ))}        
+                </ContainerMid>
+                        <FooterButtons>
+                            <ButtonPink>
+                            <button>Mudar Plano</button>
+                            </ButtonPink>
+                            <ButtonRed>
+                            <button>Cancelar Plano</button>
+                            </ButtonRed>
+                        </FooterButtons>
+
+            </ContainerApp>
+                );
+      }
+    }
 
 const ContainerApp = styled.div`
     width: 375px;
@@ -28,7 +95,6 @@ const ContainerApp = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
     h1 {
         font-family: 'Roboto';
         font-style: normal;
@@ -41,59 +107,97 @@ const ContainerApp = styled.div`
 const ContainerTop = styled.div`
     margin-top: 22px;
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     justify-content: space-between;
-
+    margin-left: 38px;
+    margin-right: 22px;
 `
 
 const PlanImage = styled.div`
- img {
+img {
     width: 75px;
-    height: 38px;
+    height: 51px;
     border-radius: 0px;
- }
-
+}
 `
-
-const PlanImg = styled.div`
-    flex-direction: column;
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    margin-left: 22px;
-`
-
-const BackTopImg = styled.div`
-    margin-top: 20px;
-    margin-left: 20px;
-    height: 28px;
-    width: 28px;
+const USerImage = styled.div`
+img {
+    width: 33px;
+    height: 33px;
     border-radius: 0px;
-    background: #0E0E13;
+}
+
 `
 
 const ContainerMid = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 30px;
+    justify-content: center;
+    margin-top: 22px;
     margin-left: 44px;
     margin-bottom: 15px;
-    img {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 139px;
-        height: 95px;
-        display: flex;
-    }
-    h1 {
-        margin-top: 12px;
+    button {
+        margin-bottom: 8px;
+        width: 299px;
+        height: 52px;
+        background: #FF4791;
+        border-radius: 8px;
         font-family: 'Roboto';
         font-style: normal;
         font-weight: 700;
-        font-size: 32px;
-        line-height: 38px;
+        font-size: 14px;
+        line-height: 16px;
+        color: #FFFFFF;
+    }
+    h1 {
+        display: flex;
+        justify-content: center;
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 28px;
+        color: #FFFFFF;
+        margin-bottom: 53px;
+    }
+`
+
+const FooterButtons = styled.div`
+    bottom: -5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`
+const ButtonPink = styled.div`
+    button {
+        width: 299px;
+        height: 52px;
+        border-radius: 8px;
+        background: #FF4791;
+        border-radius: 8px;
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 16px;
+        color: #FFFFFF;
+    }
+`
+
+const ButtonRed = styled.div`
+    button {
+        width: 299px;
+        height: 52px;
+        border-radius: 8px;
+        background: #FF4791;
+        border-radius: 8px;
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 16px;
+        background: #FF4747;
         color: #FFFFFF;
     }
 `

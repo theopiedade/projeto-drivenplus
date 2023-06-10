@@ -77,9 +77,6 @@ export default function PlanSelect () {
    
  
     useEffect(() => {
-        //console.log("Informações que precisamos após entrar no Select:");
-        //console.log("userData.token: "+userData.token);
-        //console.log("params.idPlan: "+params.idPlan);   
        
         let config = {
             headers: {
@@ -89,11 +86,8 @@ export default function PlanSelect () {
         const URL = `https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions/memberships/${params.idPlan}`;
     
         const promise = axios.get(URL,config);
-
-        //console.log("URL de busca axios GET: "+URL);   
-    
+   
         promise.then((answer) => {
-           //console.log("answer.data após sucesso do AXIOS GET "+answer.data);
            axiosSuccess(answer.data);        
         }); // if ok
     
