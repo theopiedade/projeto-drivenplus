@@ -4,6 +4,7 @@ import { useNavigate, Link, useParams} from 'react-router-dom';
 import { useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import ClipLoader from 'react-spinners/ClipLoader';
+import Modal from 'react-modal';
 
 
 export default function PlanSelect () {
@@ -19,8 +20,16 @@ export default function PlanSelect () {
     const [modalRef, setmodalRef] = useState("");
     const navigate = useNavigate();
 
+    Modal.setAppElement('#root');
+    const [modalIsOpen, setIsOpen] = useState(false);
 
-    let benefitsArray = [];
+    function openModal() {
+        setIsOpen(true);
+      }
+
+    function closeModal() {
+        setIsOpen(false);
+      }
 
 
     function BuySuccess (answer) {
@@ -62,19 +71,8 @@ export default function PlanSelect () {
             
   
         }
-
-        promise.catch((error) => {
-            console.log(error.response.data);
-            alert("Erro: "+error.response.data);
-            setFormStatus(false);
-          }); // if go bad, error
       }
 
-
-    function axiosSuccess (props) {
-        setJson(props);
-    }
-   
  
     useEffect(() => {
        
@@ -99,6 +97,11 @@ export default function PlanSelect () {
       
 
       }, []);
+
+      function axiosSuccess (props) {
+        setJson(props);
+    }
+   
 
         if (json.perks === undefined || json.perks === null || json.perks === "") {
             return (
@@ -163,15 +166,99 @@ export default function PlanSelect () {
                             "Entrar"
                         ) }
                             </button>
+
+
+
+              
+
                         </ContainerForm>
                        
-                        
+                        <ModalBox className="ModalBox" overlayClassName="ModalOverlay" display="block" isOpen={modalIsOpen} onRequestClose={closeModal} contentLabel="Modal de exemplo">
+                            
+                            <p>Tem certeza que deseja assinar o plano Driven Plus R$ 39,99?</p>
+                            
+                            <ModalContainerButtons>
+                                <ModalButton color="#CECECE">
+                                    <button onClick={closeModal}>NÃO</button>
+                                </ModalButton>
+                                <ModalButton color="#FF4791">
+                                <button color="#FF4791" onClick={closeModal}>SIM</button>
+                                </ModalButton>
+                            </ModalContainerButtons>
+                        </ModalBox>
+                     
 
                         </ContainerApp>
                 )
 
             }
         }
+
+
+const ModalBox = styled.div`
+        position: relative;
+        zindex: 0;
+        width: 248px;
+        height: 160px;
+        top: -450px;
+        left: 70px;
+        background: #FFFFFF;
+        border-radius: 12px;
+        display: ${(props) => props.display};
+        flex-direction: center;
+        align-items: center;
+        flex-direction: column;
+        p {
+            margin-top: 15px;
+            margin-left: 22px;
+            margin-right: 22px;
+            display: flex;
+            justify-content: center;
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 21px;
+            text-align: center;
+            color: black;
+        }
+        -overlay {
+              backgroundColor: 'rgba(0, 0 ,0, 0.8)'
+            }
+`
+
+const ModalContainerButtons = styled.div`
+    margin-top: 10px;
+    margin-left: 22px;
+    margin-right: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: center;
+`
+
+const ModalButton = styled.div`
+button {
+    margin-right: 14px;
+    margin-bottom: 5px;
+    width: 95px;
+    height: 42px;
+    background: ${(props) => props.color};
+    border-radius: 8px;
+    border-color: ${(props) => props.color};
+    color: white;
+ }
+`
+
+const ModalOverlay  = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(154, 62, 62, 0.8);
+`
+
 const ContainerApp = styled.div`
     width: 375px;
     height: 667px;

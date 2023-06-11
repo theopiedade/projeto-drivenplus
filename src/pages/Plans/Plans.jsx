@@ -38,12 +38,12 @@ export default function Plans () {
 
     if (json.length > 0) {
         return (
-            <ContainerApp key={userData.token}>
+            <ContainerApp>
                 <h1>Escolha seu Plano</h1>
       
             {
             json.map(item => (
-                <Link to={`/subscriptions/${item.id}`}>
+                <Link to={`/subscriptions/${item.id}`} key={item.id}>
                 <ContainerPlans key={item.id}>
                     <img src={item.image}></img>
                     <h1> {item.price} </h1>

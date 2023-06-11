@@ -20,9 +20,7 @@ export default function Login () {
     function logOnCheckAndGo () {
         const info = localStorage.getItem("UserInfo");
         if (info != undefined && info != null) {
-            console.log("JSON desconstruído enviado via UserData e Context UserInfo: "+info);
             const infoUnserial =  JSON.parse(info);
-            console.log("JSON desseriado:"+infoUnserial.membership);
             setUserData(infoUnserial);
             if (userData.membership == null) { navigate("/subscriptions"); }
             else { navigate("/home"); }

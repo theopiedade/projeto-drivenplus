@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate, Link, useParams} from 'react-router-dom';
 import { useState, useContext, useEffect} from 'react';
 import axios from 'axios';
-import ClipLoader from 'react-spinners/ClipLoader';
+
 
 export default function Home() {
 
@@ -13,15 +13,36 @@ export default function Home() {
     const navigate = useNavigate();
 
 
-    function logOnCheckAndGo () {
-        const info = localStorage.getItem("UserInfo");
-        if (info != undefined && info != null) {
-            const infoUnserial =  JSON.parse(info);
-            setUserData(infoUnserial);
-            if (userData.membership == null) { navigate("/subscriptions"); }
-            else { navigate("/home"); }
-     }
-    }   
+    function changePlan () {
+        navigate("/subscriptions");
+    }
+
+    function deletePlan () {
+
+        let config = {
+            headers: {
+                'Authorization': 'Bearer ' + userData.token
+            }
+        }
+  
+        const URL = `https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions`;
+        const query = axios.delete(URL,config);
+
+        promise.then((answer) => {
+            changePlan;
+          }); // if ok
+      
+          promise.catch((error) => {
+               deletePlanError(error.response.data);
+          }); // if go bad, error
+
+
+    }
+
+    function deletePlanError (answer) {
+        alert("Erro:"+answer.response.data.message);
+        console.log(answer);
+    }
 
     useEffect(() => {
         const data = {
@@ -68,20 +89,23 @@ export default function Home() {
                      <h1>Olá, {userInfo.name} </h1>
                      {
                             userInfo.membership.perks.map((p, i) => (
-                                <Link to={p.link}>
+                                <Link to={p.link} target="_blank" rel="noopener noreferrer" key={p.id}>
                                 <button key={p.id}> {p.title} </button>
                                 </Link>
                                 
-                            ))}        
+                            ))}
+
                 </ContainerMid>
-                        <FooterButtons>
+
+                <FooterButtons>
                             <ButtonPink>
-                            <button>Mudar Plano</button>
+                            <button onClick={changePlan}>Mudar Plano</button>
                             </ButtonPink>
                             <ButtonRed>
-                            <button>Cancelar Plano</button>
+                            <button onclick={deletePlan}>Cancelar Plano</button>
                             </ButtonRed>
-                        </FooterButtons>
+                </FooterButtons>
+                     
 
             </ContainerApp>
                 );
@@ -163,11 +187,9 @@ const ContainerMid = styled.div`
 `
 
 const FooterButtons = styled.div`
-    bottom: -5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    position: fixed;
+    top: 543px;
+    margin-left: 44px;
 `
 const ButtonPink = styled.div`
     button {
@@ -187,6 +209,7 @@ const ButtonPink = styled.div`
 
 const ButtonRed = styled.div`
     button {
+        margin-top: 8px;
         width: 299px;
         height: 52px;
         border-radius: 8px;
