@@ -115,9 +115,11 @@ export default function PlanSelect () {
         else {
                 return (
                     <ContainerApp>
-                        <Link to={`/subscriptions/`}>
-                        <BackTopImg><img src="../../assets/back.png"/></BackTopImg>
-                        </Link>
+                        
+                        <BackTopImg>
+                        <Link to={`/subscriptions/`}><img src="../../assets/back.png"/></Link>
+                        </BackTopImg>
+                        
 
                         <ContainerMid>
                             <PlanImg>
@@ -196,6 +198,7 @@ export default function PlanSelect () {
 
 
 const ModalBox = styled.div`
+        opacity: 2;
         position: relative;
         zindex: 0;
         width: 248px;
@@ -284,6 +287,7 @@ const PlanImg = styled.div`
 `
 
 const BackTopImg = styled.div`
+    opacity: 0.2;
     margin-top: 20px;
     margin-left: 20px;
     height: 28px;
@@ -293,6 +297,7 @@ const BackTopImg = styled.div`
 `
 
 const ContainerMid = styled.div`
+    opacity: 0.2;
     display: flex;
     flex-direction: column;
     margin-top: 30px;
@@ -354,6 +359,7 @@ const BenefitsAndPrice = styled.div`
 `
 
 const ContainerForm = styled.div`
+    opacity: 0.2;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -389,6 +395,7 @@ const ContainerForm = styled.div`
 
  
 const SmallInputContainer = styled.div`
+        opacity: 0.2;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
