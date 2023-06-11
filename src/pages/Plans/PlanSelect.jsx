@@ -21,14 +21,18 @@ export default function PlanSelect () {
     const navigate = useNavigate();
 
     Modal.setAppElement('#root');
-    const [modalIsOpen, setIsOpen] = useState(false);
+    const [modalDisplay, setModalDisplay] = useState("none");
+    const [noModalOpacity, setNoModalOpacity] = useState("2");
+
 
     function openModal() {
-        setIsOpen(true);
+        setModalDisplay("block");
+        setNoModalOpacity("0.2");
       }
 
     function closeModal() {
-        setIsOpen(false);
+        setModalDisplay("none");
+        setNoModalOpacity("2");
       }
 
 
@@ -42,11 +46,7 @@ export default function PlanSelect () {
 
     function sendRequest(event) {
 
-        const ConfirmBuy = confirm("Confirma a compra ?");
-
-    
-        if (ConfirmBuy) { 
-               event.preventDefault();
+            event.preventDefault();
 
 
             let config = {
@@ -69,8 +69,6 @@ export default function PlanSelect () {
             query.then(BuySuccess); 
             query.catch(BuyError);
             
-  
-        }
       }
 
  
@@ -106,8 +104,13 @@ export default function PlanSelect () {
         if (json.perks === undefined || json.perks === null || json.perks === "") {
             return (
                 <ContainerApp>
+                        <BackTopImg>
+                            <Link to={`/subscriptions/`}><img src="../../assets/back.png"/></Link>
+                        </BackTopImg>
+
                     <PlanImg>
                     <h1>Carregando...</h1>
+                    <h1>Erro? Clica em voltar</h1>
                     </PlanImg>
                 </ContainerApp>
             )
@@ -116,12 +119,12 @@ export default function PlanSelect () {
                 return (
                     <ContainerApp>
                         
-                        <BackTopImg>
+                        <BackTopImg opacity={noModalOpacity}>
                         <Link to={`/subscriptions/`}><img src="../../assets/back.png"/></Link>
                         </BackTopImg>
                         
 
-                        <ContainerMid>
+                        <ContainerMid opacity={noModalOpacity}>
                             <PlanImg>
                             <img src={json.image} />
                             <h1>{json.name}</h1>
@@ -144,21 +147,21 @@ export default function PlanSelect () {
                             <h1>Preço:</h1> 
                             </TopBenefitsAndPrice>
                             <BenefitsAndPrice>
-                            R$ {json.price} cobrados mensalmente
+                            R$ {json.price.replace(".",",")} cobrados mensalmente
                             </BenefitsAndPrice>
 
                         </ContainerMid>
 
-                        <ContainerForm>
+                        <ContainerForm opacity={noModalOpacity}>
                             <input data-test="name-input" value={name} type="text" disabled={formStatus} onChange={e => setName(e.target.value)}  placeholder="Nome impresso no cartão" />
                             <input data-test="card-input" value={card} type="text" disabled={formStatus} onChange={e => setCard(e.target.value)} placeholder="Digitos do cartão" />
-                        </ContainerForm>
+          
                             <SmallInputContainer>
                             <input data-test="cardcore-input" value={secureCod} type="text" disabled={formStatus} onChange={e => setSecureCod(e.target.value)}  placeholder="Código de segurança" />
                             <input data-test="cardvality-input" value={vality} type="text" disabled={formStatus} onChange={e => setVality(e.target.value)} placeholder="Validade" />
                             </SmallInputContainer>
-                        <ContainerForm>
-                            <button data-test="login-btn" onClick={sendRequest} disabled={formStatus}>
+              
+                            <button data-test="login-btn" onClick={openModal} disabled={formStatus}>
                             {
                         formStatus? (
                             <div className="loader-container">
@@ -175,16 +178,16 @@ export default function PlanSelect () {
 
                         </ContainerForm>
                        
-                        <ModalBox className="ModalBox" overlayClassName="ModalOverlay" display="block" isOpen={modalIsOpen} onRequestClose={closeModal} contentLabel="Modal de exemplo">
+                        <ModalBox className="ModalBox" display={modalDisplay} onRequestClose={closeModal} contentLabel="Modal de exemplo">
                             
-                            <p>Tem certeza que deseja assinar o plano Driven Plus R$ 39,99?</p>
+                            <p>Tem certeza que deseja assinar o plano {json.name} R$ {json.price.replace(".",",")}  ?</p>
                             
                             <ModalContainerButtons>
                                 <ModalButton color="#CECECE">
                                     <button onClick={closeModal}>NÃO</button>
                                 </ModalButton>
                                 <ModalButton color="#FF4791">
-                                <button color="#FF4791" onClick={closeModal}>SIM</button>
+                                <button color="#FF4791" onClick={sendRequest}>SIM</button>
                                 </ModalButton>
                             </ModalContainerButtons>
                         </ModalBox>
@@ -202,7 +205,7 @@ const ModalBox = styled.div`
         position: relative;
         zindex: 0;
         width: 248px;
-        height: 160px;
+        height: 210px;
         top: -450px;
         left: 70px;
         background: #FFFFFF;
@@ -215,6 +218,7 @@ const ModalBox = styled.div`
             margin-top: 15px;
             margin-left: 22px;
             margin-right: 22px;
+            margin-bottom: 47px;
             display: flex;
             justify-content: center;
             font-family: 'Roboto';
@@ -225,15 +229,13 @@ const ModalBox = styled.div`
             text-align: center;
             color: black;
         }
-        -overlay {
-              backgroundColor: 'rgba(0, 0 ,0, 0.8)'
-            }
 `
 
 const ModalContainerButtons = styled.div`
     margin-top: 10px;
     margin-left: 22px;
     margin-right: 8px;
+    margin-bottom: 11px;
     display: flex;
     flex-direction: row;
     justify-content: space-between; 
@@ -243,7 +245,7 @@ const ModalContainerButtons = styled.div`
 const ModalButton = styled.div`
 button {
     margin-right: 14px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     width: 95px;
     height: 42px;
     background: ${(props) => props.color};
@@ -253,14 +255,6 @@ button {
  }
 `
 
-const ModalOverlay  = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(154, 62, 62, 0.8);
-`
 
 const ContainerApp = styled.div`
     width: 375px;
@@ -287,7 +281,7 @@ const PlanImg = styled.div`
 `
 
 const BackTopImg = styled.div`
-    opacity: 0.2;
+    opacity: ${(props) => props.opacity};
     margin-top: 20px;
     margin-left: 20px;
     height: 28px;
@@ -297,7 +291,7 @@ const BackTopImg = styled.div`
 `
 
 const ContainerMid = styled.div`
-    opacity: 0.2;
+    opacity: ${(props) => props.opacity};
     display: flex;
     flex-direction: column;
     margin-top: 30px;
@@ -359,7 +353,7 @@ const BenefitsAndPrice = styled.div`
 `
 
 const ContainerForm = styled.div`
-    opacity: 0.2;
+    opacity: ${(props) => props.opacity};
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -395,7 +389,7 @@ const ContainerForm = styled.div`
 
  
 const SmallInputContainer = styled.div`
-        opacity: 0.2;
+        opacity: ${(props) => props.opacity};
         display: flex;
         flex-direction: row;
         justify-content: space-between;
