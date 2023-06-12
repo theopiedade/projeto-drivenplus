@@ -33,7 +33,7 @@ export default function Home() {
           }); // if ok
       
           promise.catch((error) => {
-               deletePlanError(error.response.data);
+              deletePlanError(error.response.data);
           }); // if go bad, error
 
 
@@ -41,6 +41,11 @@ export default function Home() {
 
     function deletePlanError (answer) {
         alert("Erro:"+answer.response.data.message);
+        console.log("Erro:"+answer.response.status);
+        if (answer.response.status == 401) {
+            localStorage.removeItem("UserInfo");
+            navigate("/");
+        }
         console.log(answer);
     }
 
@@ -56,7 +61,11 @@ export default function Home() {
 
       function dataError (answer) {
         alert(answer.response.data.message);
-        setFormStatus(false);
+        if (answer.response.status == 401) {
+            localStorage.removeItem("UserInfo");
+            navigate("/");
+        }
+        console.log(answer);
       }
 
       function dataSuccess (answer) {
@@ -81,9 +90,11 @@ export default function Home() {
                     <PlanImage>
                     <img src={userInfo.membership.image} />
                     </PlanImage>
-                    <USerImage>
+                    <UserImage>
+                    <Link to={`/users/`}>
                     <img src="../../assets/user.png" />
-                    </USerImage>
+                    </Link>
+                    </UserImage>
                  </ContainerTop>
                 <ContainerMid>
                      <h1>Olá, {userInfo.name} </h1>
@@ -144,7 +155,7 @@ img {
     border-radius: 0px;
 }
 `
-const USerImage = styled.div`
+const UserImage = styled.div`
 img {
     width: 33px;
     height: 33px;

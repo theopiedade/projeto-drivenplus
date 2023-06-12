@@ -7,6 +7,7 @@ import Login from "./pages/Login/Login"
 import SignUp from "./pages/SignUp/SignUp"
 import Plans from "./pages/Plans/Plans"
 import Users from "./pages/Users/Users"
+import UserUpdate from "./pages/Users/UserUpdate"
 import PlanSelect from "./pages/Plans/PlanSelect"
 
 export default function App() {
@@ -28,6 +29,8 @@ export default function App() {
                   <Route path='/subscriptions' element={  <Plans/> } />
                   <Route path='/home' element={  <Home/> } />
                   <Route path='/users' element={  <Users/> } />
+                  <Route path='/users/:id' element={  <Users/> } />
+                  <Route path='/users/:id/update' element={ <UserUpdate/> } />
 
                 </Routes>
 

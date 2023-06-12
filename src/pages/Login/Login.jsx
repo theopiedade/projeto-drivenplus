@@ -44,7 +44,6 @@ export default function Login () {
       }
 
       function loginSuccess (answer) {
-        console.log(answer.data);
         localStorage.setItem('UserInfo', JSON.stringify(answer.data));
         logOnCheckAndGo();
       }

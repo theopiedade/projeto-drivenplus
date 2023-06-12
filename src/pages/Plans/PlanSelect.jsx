@@ -110,7 +110,6 @@ export default function PlanSelect () {
 
                     <PlanImg>
                     <h1>Carregando...</h1>
-                    <h1>Erro? Clica em voltar</h1>
                     </PlanImg>
                 </ContainerApp>
             )
@@ -153,32 +152,20 @@ export default function PlanSelect () {
                         </ContainerMid>
 
                         <ContainerForm opacity={noModalOpacity}>
-                            <input data-test="name-input" value={name} type="text" disabled={formStatus} onChange={e => setName(e.target.value)}  placeholder="Nome impresso no cartão" />
-                            <input data-test="card-input" value={card} type="text" disabled={formStatus} onChange={e => setCard(e.target.value)} placeholder="Digitos do cartão" />
+                            <input value={name} type="text" disabled={formStatus} onChange={e => setName(e.target.value)}  placeholder="Nome impresso no cartão" />
+                            <input value={card} type="text" disabled={formStatus} onChange={e => setCard(e.target.value)} placeholder="Digitos do cartão" />
           
                             <SmallInputContainer>
-                            <input data-test="cardcore-input" value={secureCod} type="text" disabled={formStatus} onChange={e => setSecureCod(e.target.value)}  placeholder="Código de segurança" />
-                            <input data-test="cardvality-input" value={vality} type="text" disabled={formStatus} onChange={e => setVality(e.target.value)} placeholder="Validade" />
+                            <input value={secureCod} type="text" disabled={formStatus} onChange={e => setSecureCod(e.target.value)}  placeholder="Código de segurança" />
+                            <input value={vality} type="text" disabled={formStatus} onChange={e => setVality(e.target.value)} placeholder="Validade" />
                             </SmallInputContainer>
               
-                            <button data-test="login-btn" onClick={openModal} disabled={formStatus}>
-                            {
-                        formStatus? (
-                            <div className="loader-container">
-                                <ClipLoader color={'#fff'} loading={formStatus} size={15} />
-                            </div>
-                            ) : (
-                            "Entrar"
-                        ) }
+                            <button onClick={openModal} disabled={formStatus}>
+                            Entrar
                             </button>
-
-
-
-              
-
                         </ContainerForm>
                        
-                        <ModalBox className="ModalBox" display={modalDisplay} onRequestClose={closeModal} contentLabel="Modal de exemplo">
+                        <ModalBox className="ModalBox" display={modalDisplay} contentLabel="Modal de exemplo">
                             
                             <p>Tem certeza que deseja assinar o plano {json.name} R$ {json.price.replace(".",",")}  ?</p>
                             
@@ -282,7 +269,7 @@ const PlanImg = styled.div`
 
 const BackTopImg = styled.div`
     opacity: ${(props) => props.opacity};
-    margin-top: 20px;
+    margin-top: 10px;
     margin-left: 20px;
     height: 28px;
     width: 28px;
@@ -294,7 +281,7 @@ const ContainerMid = styled.div`
     opacity: ${(props) => props.opacity};
     display: flex;
     flex-direction: column;
-    margin-top: 30px;
+    margin-top: 20px;
     margin-left: 44px;
     margin-bottom: 15px;
     img {
@@ -357,6 +344,7 @@ const ContainerForm = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 10px;
     input {
         padding: 6px 6px;
         margin-bottom: 3px;
